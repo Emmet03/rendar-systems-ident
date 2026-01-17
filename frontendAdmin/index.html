@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Rendar Systems – Admin</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      padding: 20px;
+    }
+    h1, h2 {
+      color: #93c5fd;
+    }
+    section {
+      border: 1px solid #334155;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+      background: #020617;
+    }
+    label {
+      display: block;
+      margin-top: 8px;
+    }
+    input, textarea, select, button {
+      width: 100%;
+      padding: 6px;
+      margin-top: 4px;
+      background: #020617;
+      color: #e5e7eb;
+      border: 1px solid #475569;
+    }
+    button {
+      margin-top: 10px;
+      cursor: pointer;
+      background: #1e40af;
+    }
+    pre {
+      background: #020617;
+      padding: 10px;
+      border: 1px solid #334155;
+      max-height: 200px;
+      overflow: auto;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Rendar Systems – Admin Console</h1>
+
+<section>
+  <h2>Alle Nutzer anzeigen</h2>
+  <button onclick="loadAllAndCache()">Alle laden</button>
+  <pre id="all-users"></pre>
+</section>
+
+<section>
+  <h2>Admin: Ident anlegen / bearbeiten</h2>
+
+  <label>Vorhandenen Ident wählen
+    <select id="ident-select">
+      <option value="">— bitte wählen —</option>
+    </select>
+  </label>
+
+  <label>ID <input id="id"></label>
+  <label>Name <input id="name"></label>
+  <label>Spezies <input id="species"></label>
+  <label>Alter <input id="age" type="number"></label>
+  <label>Heimatwelt <input id="homeWorld"></label>
+  <label>Beruf <input id="occupation"></label>
+  <label>Danger Level (0–10) <input id="dangerLevel" type="number"></label>
+  <label>Beschreibung <textarea id="description"></textarea></label>
+  <label>Kontostand <input id="balance" type="number"></label>
+
+  <button onclick="saveIdent()">Speichern / Updaten</button>
+</section>
+
+<section>
+  <h2>Imperium: Danger Level ändern</h2>
+
+  <label>Ident wählen
+    <select id="imp-select"></select>
+  </label>
+
+  <label>ID <input id="imp-id"></label>
+  <label>Neues Danger Level <input id="imp-danger" type="number"></label>
+  <button onclick="setDanger()">Setzen</button>
+</section>
+
+<section>
+  <h2>Bar: Kauf buchen</h2>
+
+  <label>Ident wählen
+    <select id="buy-select"></select>
+  </label>
+
+  <label>ID <input id="buy-id"></label>
+  <label>Item <input id="buy-item"></label>
+  <label>Betrag <input id="buy-amount" type="number"></label>
+  <label>Notiz <input id="buy-note"></label>
+  <button onclick="buy()">Kaufen</button>
+</section>
+
+<section>
+  <h2>Kauflog anzeigen</h2>
+
+  <label>Ident wählen
+    <select id="log-select"></select>
+  </label>
+
+  <label>ID <input id="log-id"></label>
+  <button onclick="loadLog()">Laden</button>
+  <pre id="log"></pre>
+</section>
+
+<section>
+  <h2>Antwort</h2>
+  <pre id="output"></pre>
+</section>
+
+<script src="admin.js"></script>
+<script>init();</script>
+</body>
+</html>
