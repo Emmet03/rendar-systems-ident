@@ -5,6 +5,9 @@ let html5QrCode = null;
 let isScanning = false;
 let currentIdentId = null;
 
+// Optional: nach erfolgreichem Scan automatisch stoppen (verhindert Kamera-"busy" Probleme)
+const STOP_AFTER_SUCCESS = false;
+
 const statusBox = document.getElementById("status");
 const historyBox = document.getElementById("history");
 
@@ -44,10 +47,26 @@ function setIdentCardVisible(on) {
    Scanner
 ========================= */
 
+async function cleanupScanner() {
+  // defensiv: falls ein alter Scanner "hängt"
+  if (!html5QrCode) return;
+
+  try { await html5QrCode.stop(); } catch (_) {}
+  try { await html5QrCode.clear(); } catch (_) {}
+  html5QrCode = null;
+  isScanning = false;
+}
+
 async function startScan() {
   if (isScanning) return;
 
+  const btnStart = document.getElementById("btn-start");
+  const btnStop = document.getElementById("btn-stop");
+
   try {
+    // vorher sauber aufräumen (wichtig gegen NotReadableError)
+    await cleanupScanner();
+
     const scannerEl = document.getElementById("scanner");
     scannerEl.innerHTML = ""; // reset
 
@@ -55,46 +74,103 @@ async function startScan() {
 
     const configs = { fps: 10, qrbox: { width: 240, height: 240 } };
 
-    document.getElementById("btn-start").disabled = true;
+    btnStart.disabled = true;
 
-    // Kamera wählen (meist back camera)
-    const cameras = await Html5Qrcode.getCameras();
-    if (!cameras || cameras.length === 0) {
-      throw new Error("Keine Kamera gefunden");
+    // --- Start-Strategie:
+    // 1) facingMode: environment (robust auf Mobile)
+    // 2) deviceId: best camera
+    // 3) deviceId: first camera
+    let started = false;
+    let lastErr = null;
+
+    // 1) facingMode
+    try {
+      await html5QrCode.start(
+        { facingMode: "environment" },
+        configs,
+        onScanSuccess,
+        onScanFailure
+      );
+      started = true;
+      log("Scan gestartet (facingMode: environment).");
+    } catch (e1) {
+      lastErr = e1;
     }
 
-    const camId = pickBestCamera(cameras);
+    // Kameras erst abfragen wenn nötig
+    let cameras = null;
+    if (!started) {
+      try {
+        cameras = await Html5Qrcode.getCameras();
+      } catch (eCam) {
+        lastErr = eCam;
+      }
+    }
 
-    await html5QrCode.start(
-      { deviceId: { exact: camId } },
-      configs,
-      onScanSuccess,
-      onScanFailure
-    );
+    if (!started) {
+      if (!cameras || cameras.length === 0) {
+        throw new Error("Keine Kamera gefunden (oder Zugriff blockiert).");
+      }
+
+      // 2) best camera
+      const bestId = pickBestCamera(cameras);
+      try {
+        await html5QrCode.start(
+          { deviceId: { exact: bestId } },
+          configs,
+          onScanSuccess,
+          onScanFailure
+        );
+        started = true;
+        log(`Scan gestartet (deviceId: best = ${bestId}).`);
+      } catch (e2) {
+        lastErr = e2;
+      }
+
+      // 3) first camera
+      if (!started) {
+        const firstId = cameras[0].id;
+        await html5QrCode.start(
+          { deviceId: { exact: firstId } },
+          configs,
+          onScanSuccess,
+          onScanFailure
+        );
+        started = true;
+        log(`Scan gestartet (deviceId: first = ${firstId}).`);
+      }
+    }
 
     isScanning = true;
-    document.getElementById("btn-stop").disabled = false;
-    log("Scan gestartet.");
+    btnStop.disabled = false;
   } catch (e) {
+    // bei Fehler: UI zurücksetzen + sauber aufräumen
+    await cleanupScanner();
+
     document.getElementById("btn-start").disabled = false;
-    log(e?.message ?? String(e), "error");
+    document.getElementById("btn-stop").disabled = true;
+
+    const name = e?.name ? `${e.name}: ` : "";
+    log(`${name}${e?.message ?? String(e)}`, "error");
+    console.error(e);
   }
 }
 
 async function stopScan() {
+  const btnStart = document.getElementById("btn-start");
+  const btnStop = document.getElementById("btn-stop");
+
   if (!html5QrCode || !isScanning) return;
-  try {
-    await html5QrCode.stop();
-    await html5QrCode.clear();
-  } catch (_) {}
-  isScanning = false;
-  document.getElementById("btn-start").disabled = false;
-  document.getElementById("btn-stop").disabled = true;
+
+  await cleanupScanner();
+
+  btnStart.disabled = false;
+  btnStop.disabled = true;
   log("Scan gestoppt.");
 }
 
 function pickBestCamera(cameras) {
-  // Heuristik: "back", "rear" bevorzugen
+  // Heuristik: "back", "rear", "environment" bevorzugen
   const back = cameras.find(c => /back|rear|environment/i.test(c.label));
   return (back ?? cameras[0]).id;
 }
@@ -117,6 +193,11 @@ async function onScanSuccess(decodedText) {
 
   log(`Scan: ${decodedText} → ID=${id}`);
   await loadIdent(id);
+
+  // Optional: Kamera nach erfolgreichem Scan freigeben
+  if (STOP_AFTER_SUCCESS) {
+    await stopScan();
+  }
 }
 
 function onScanFailure(_err) {
@@ -174,7 +255,9 @@ async function loadIdent(id) {
     log(`Ident geladen: ${ident.name ?? ident.id}`);
   } catch (e) {
     setIdentCardVisible(false);
-    log(e?.message ?? String(e), "error");
+    const name = e?.name ? `${e.name}: ` : "";
+    log(`${name}${e?.message ?? String(e)}`, "error");
+    console.error(e);
   }
 }
 
@@ -252,7 +335,9 @@ async function setDanger(level) {
     // neu laden um Server-Wahrheit zu haben
     await reloadCurrent();
   } catch (e) {
-    log(e?.message ?? String(e), "error");
+    const name = e?.name ? `${e.name}: ` : "";
+    log(`${name}${e?.message ?? String(e)}`, "error");
+    console.error(e);
   }
 }
 
