@@ -1,152 +1,237 @@
 <!doctype html>
 <html lang="de">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Imperium – Ident Scanner</title>
   <style>
-    :root{
-      --bg:#0f172a;
-      --panel:#020617;
-      --border:#334155;
-      --text:#e5e7eb;
-      --muted:#94a3b8;
-      --accent:#f59e0b;
-      --accent2:#1e40af;
-      --good:#22c55e;
-      --bad:#ef4444;
+    @font-face {
+      font-family: 'Aurebesh';
+      src: url('./../fonts/englbesh.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
     }
-    body{
-      margin:0;
-      font-family: Arial, sans-serif;
-      background:var(--bg);
-      color:var(--text);
+
+    :root {
+      --bg: #0f172a;
+      --panel: #020617;
+      --border: #334155;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #f59e0b;
+      --accent2: #1e40af;
+      --good: #22c55e;
+      --bad: #ef4444;
     }
-    header{
-      padding:16px;
-      border-bottom:1px solid var(--border);
-      background:rgba(2,6,23,.8);
-      position:sticky;
-      top:0;
+
+    body {
+      margin: 0;
+      font-family: 'Aurebesh';
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(2, 6, 23, .8);
+      position: sticky;
+      top: 0;
       backdrop-filter: blur(6px);
-      z-index:10;
-    }
-    header h1{ margin:0; font-size:18px; color:#93c5fd; }
-    header .sub{ color:var(--muted); font-size:12px; margin-top:4px; }
-
-    main{ padding:16px; display:grid; gap:16px; max-width:1000px; margin:0 auto; }
-
-    .grid{
-      display:grid;
-      gap:16px;
-    }
-    @media (min-width: 900px){
-      .grid{ grid-template-columns: 1.2fr .8fr; align-items:start; }
+      z-index: 10;
     }
 
-    section{
-      background:var(--panel);
-      border:1px solid var(--border);
-      border-radius:10px;
-      padding:14px;
+    header h1 {
+      margin: 0;
+      font-size: 18px;
+      color: #93c5fd;
     }
-    h2{ margin:0 0 10px 0; font-size:16px; color:#93c5fd; }
-    label{ display:block; margin-top:10px; font-size:13px; color:var(--muted); }
-    input, button, select{
-      width:100%;
-      box-sizing:border-box;
-      padding:10px;
-      margin-top:6px;
-      border-radius:8px;
-      border:1px solid #475569;
-      background:#020617;
-      color:var(--text);
-      font-size:14px;
-    }
-    button{
-      cursor:pointer;
-      border:1px solid transparent;
-      background:var(--accent2);
-    }
-    button.secondary{ background:#0b1220; border-color:#475569; }
-    button.danger{ background:#7f1d1d; }
-    button:disabled{ opacity:.6; cursor:not-allowed; }
 
-    .row{ display:flex; gap:10px; }
-    .row > *{ flex:1; }
+    header .sub {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 4px;
+    }
 
-    #scanner{
-      width:100%;
-      border-radius:10px;
-      overflow:hidden;
-      border:1px solid var(--border);
-      background:#000;
+    main {
+      padding: 16px;
+      display: grid;
+      gap: 16px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    @media (min-width: 900px) {
+      .grid {
+        grid-template-columns: 1.2fr .8fr;
+        align-items: start;
+      }
+    }
+
+    section {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    h2 {
+      margin: 0 0 10px 0;
+      font-size: 16px;
+      color: #93c5fd;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    input,
+    button,
+    select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 8px;
+      border: 1px solid #475569;
+      background: #020617;
+      color: var(--text);
+      font-size: 14px;
+      font-family: 'Aurebesh';
+    }
+
+    button {
+      cursor: pointer;
+      border: 1px solid transparent;
+      background: var(--accent2);
+    }
+
+    button.secondary {
+      background: #0b1220;
+      border-color: #475569;
+    }
+
+    button.danger {
+      background: #7f1d1d;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .row>* {
+      flex: 1;
+    }
+
+    #scanner {
+      width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #000;
       min-height: 260px;
     }
 
-    .card{
-      border:1px solid #334155;
-      border-radius:10px;
-      padding:12px;
-      background:#071024;
-    }
-    .kv{ display:grid; grid-template-columns: 120px 1fr; gap:6px 10px; font-size:14px; }
-    .k{ color:var(--muted); }
-    .v{ color:var(--text); }
-    .pill{
-      display:inline-block;
-      padding:4px 8px;
-      border-radius:999px;
-      font-size:12px;
-      border:1px solid #475569;
-      background:#0b1220;
-      color:var(--text);
+    .card {
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 12px;
+      background: #071024;
     }
 
-    .dangerbar{
-      display:flex;
-      gap:6px;
-      margin-top:8px;
-      flex-wrap:wrap;
-    }
-    .dangerbar button{
-      width:auto;
-      padding:8px 10px;
-      background:#0b1220;
-      border:1px solid #475569;
-    }
-    .dangerbar button.active{
-      background:var(--accent);
-      color:#111827;
-      border-color:transparent;
-      font-weight:bold;
+    .kv {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 6px 10px;
+      font-size: 14px;
     }
 
-    .status{
-      white-space:pre-wrap;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size:12px;
-      color:#cbd5e1;
-      border:1px solid var(--border);
-      background:#020617;
-      padding:10px;
-      border-radius:10px;
-      max-height:220px;
-      overflow:auto;
+    .k {
+      color: var(--muted);
     }
 
-    .history{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
+    .v {
+      color: var(--text);
     }
-    .history button{
-      text-align:left;
-      background:#0b1220;
-      border:1px solid #475569;
+
+    .pill {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid #475569;
+      background: #0b1220;
+      color: var(--text);
     }
-    .ok{ color:var(--good); }
-    .err{ color:var(--bad); }
+
+    .dangerbar {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .dangerbar button {
+      width: auto;
+      padding: 8px 10px;
+      background: #0b1220;
+      border: 1px solid #475569;
+    }
+
+    .dangerbar button.active {
+      background: var(--accent);
+      color: #111827;
+      border-color: transparent;
+      font-weight: bold;
+    }
+
+    .status {
+      white-space: pre-wrap;
+      font-family: 'Aurebesh';
+      font-size: 12px;
+      color: #cbd5e1;
+      border: 1px solid var(--border);
+      background: #020617;
+      padding: 10px;
+      border-radius: 10px;
+      max-height: 220px;
+      overflow: auto;
+    }
+
+    .history {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .history button {
+      text-align: left;
+      background: #0b1220;
+      border: 1px solid #475569;
+    }
+
+    .ok {
+      color: var(--good);
+    }
+
+    .err {
+      color: var(--bad);
+    }
   </style>
 
   <!-- QR Scanner Lib (CDN) -->
@@ -154,94 +239,100 @@
 </head>
 
 <body>
-<header>
-  <h1>Imperium – Ident Scanner</h1>
-  <div class="sub">Scan → Ident anzeigen → Danger Level setzen</div>
-</header>
+  <header>
+    <h1>Imperium – Ident Scanner</h1>
+    <div class="sub">Scan → Ident anzeigen → Danger Level setzen</div>
+  </header>
 
-<main>
-  <div class="grid">
-    <section>
-      <h2>Scanner</h2>
-      <div id="scanner"></div>
+  <main>
+    <div class="grid">
+      <section>
+        <h2>Scanner</h2>
+        <div id="scanner"></div>
 
-      <div class="row" style="margin-top:10px;">
-        <button id="btn-start" onclick="startScan()">Scan starten</button>
-        <button id="btn-stop" class="secondary" onclick="stopScan()" disabled>Stop</button>
-      </div>
+        <div class="row" style="margin-top:10px;">
+          <button id="btn-start" onclick="startScan()">Scan starten</button>
+          <button id="btn-stop" class="secondary" onclick="stopScan()" disabled>Stop</button>
+        </div>
 
-      <label>Manuell: ID eingeben</label>
-      <div class="row">
-        <input id="manual-id" placeholder="z.B. 100042" inputmode="numeric" />
-        <button class="secondary" onclick="loadIdentFromInput()">Laden</button>
-      </div>
+        <label>Manuell: ID eingeben</label>
+        <div class="row">
+          <input id="manual-id" placeholder="z.B. 100042" inputmode="numeric" />
+          <button class="secondary" onclick="loadIdentFromInput()">Laden</button>
+        </div>
 
-      <label>API</label>
-      <input id="api-path" />
+        <label>API</label>
+        <input id="api-path" />
 
-      <div class="row">
-        <button class="secondary" onclick="saveSettings()">Einstellungen speichern</button>
-        <button class="secondary" onclick="clearHistory()">History leeren</button>
-      </div>
-    </section>
+        <div class="row">
+          <button class="secondary" onclick="saveSettings()">Einstellungen speichern</button>
+          <button class="secondary" onclick="clearHistory()">History leeren</button>
+        </div>
+      </section>
 
-    <section>
-      <h2>Ident</h2>
+      <section>
+        <h2>Ident</h2>
 
-      <div class="card" id="ident-card" style="display:none;">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
-          <div>
-            <div style="font-size:16px; font-weight:bold;" id="ident-name">—</div>
-            <div style="margin-top:4px;">
-              <span class="pill" id="ident-id">ID: —</span>
-              <span class="pill" id="ident-species">Spezies: —</span>
+        <div class="card" id="ident-card" style="display:none;">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+            <div>
+              <div style="font-size:16px; font-weight:bold;" id="ident-name">—</div>
+              <div style="margin-top:4px;">
+                <span class="pill" id="ident-id">ID: —</span>
+                <span class="pill" id="ident-species">Spezies: —</span>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div style="color:var(--muted); font-size:12px;">Danger Level</div>
+              <div style="font-size:22px; font-weight:bold;" id="ident-danger">—</div>
             </div>
           </div>
-          <div style="text-align:right;">
-            <div style="color:var(--muted); font-size:12px;">Danger Level</div>
-            <div style="font-size:22px; font-weight:bold;" id="ident-danger">—</div>
+
+          <div style="height:10px;"></div>
+
+          <div class="kv">
+            <div class="k">Alter</div>
+            <div class="v" id="ident-age">—</div>
+            <div class="k">Heimatwelt</div>
+            <div class="v" id="ident-home">—</div>
+            <div class="k">Beruf</div>
+            <div class="v" id="ident-occ">—</div>
+            <div class="k">Beschreibung</div>
+            <div class="v" id="ident-desc">—</div>
+            <div class="k">Kontostand</div>
+            <div class="v" id="ident-balance">—</div>
+          </div>
+
+          <div style="height:12px;"></div>
+
+          <div style="color:var(--muted); font-size:13px;">Danger Level setzen</div>
+          <div class="dangerbar" id="dangerbar"></div>
+
+          <div class="row" style="margin-top:10px;">
+            <button class="secondary" onclick="reloadCurrent()">Neu laden</button>
+            <button class="danger" onclick="setDanger(0)">Freigeben (0)</button>
           </div>
         </div>
 
-        <div style="height:10px;"></div>
-
-        <div class="kv">
-          <div class="k">Alter</div><div class="v" id="ident-age">—</div>
-          <div class="k">Heimatwelt</div><div class="v" id="ident-home">—</div>
-          <div class="k">Beruf</div><div class="v" id="ident-occ">—</div>
-          <div class="k">Beschreibung</div><div class="v" id="ident-desc">—</div>
-          <div class="k">Kontostand</div><div class="v" id="ident-balance">—</div>
+        <div class="card" id="ident-empty">
+          Noch kein Ident geladen.
         </div>
 
         <div style="height:12px;"></div>
 
-        <div style="color:var(--muted); font-size:13px;">Danger Level setzen</div>
-        <div class="dangerbar" id="dangerbar"></div>
+        <h2>Letzte Scans</h2>
+        <div class="history" id="history"></div>
+      </section>
+    </div>
 
-        <div class="row" style="margin-top:10px;">
-          <button class="secondary" onclick="reloadCurrent()">Neu laden</button>
-          <button class="danger" onclick="setDanger(0)">Freigeben (0)</button>
-        </div>
-      </div>
-
-      <div class="card" id="ident-empty">
-        Noch kein Ident geladen.
-      </div>
-
-      <div style="height:12px;"></div>
-
-      <h2>Letzte Scans</h2>
-      <div class="history" id="history"></div>
+    <section>
+      <h2>Status / Debug</h2>
+      <div class="status" id="status"></div>
     </section>
-  </div>
+  </main>
 
-  <section>
-    <h2>Status / Debug</h2>
-    <div class="status" id="status"></div>
-  </section>
-</main>
-
-<script src="imperium.js"></script>
-<script>init();</script>
+  <script src="imperium.js"></script>
+  <script>init();</script>
 </body>
+
 </html>
