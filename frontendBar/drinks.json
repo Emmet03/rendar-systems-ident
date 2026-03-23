@@ -1,0 +1,18 @@
+{
+  "categories": [
+    {
+      "name": "Softdrinks",
+      "items": [
+        { "id": "cola", "name": "Cola", "price": 3 },
+        { "id": "water", "name": "Wasser", "price": 2 }
+      ]
+    },
+    {
+      "name": "Alkohol",
+      "items": [
+        { "id": "beer", "name": "Bier", "price": 4 },
+        { "id": "shot", "name": "Shot", "price": 2 }
+      ]
+    }
+  ]
+}

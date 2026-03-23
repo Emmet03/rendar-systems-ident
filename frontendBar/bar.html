@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Imperiale Bar</title>
+
+  <!-- html5-qrcode lokal -->
+  <script src="./html5-qrcode.min.js"></script>
+
+  <style>
+    body {
+      background: black;
+      color: #00eaff;
+      font-family: "Orbitron", sans-serif;
+      margin: 0;
+      padding: 10px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #ffe81f;
+      text-shadow: 0 0 10px #ffe81f;
+    }
+
+    #reader {
+      width: 100%;
+      max-width: 400px;
+      margin: auto;
+      border: 2px solid #00eaff;
+      border-radius: 10px;
+      box-shadow: 0 0 15px #00eaff;
+    }
+
+    #player {
+      text-align: center;
+      margin: 10px;
+      font-size: 1.2em;
+    }
+
+    .category {
+      margin-top: 15px;
+    }
+
+    .grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn {
+      flex: 1 1 100px;
+      background: #111;
+      border: 1px solid #00eaff;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 0 10px #00eaff33;
+    }
+
+    .btn:hover {
+      background: #00eaff22;
+    }
+
+    .price {
+      color: #ffe81f;
+    }
+
+    #status {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 1.3em;
+    }
+
+    .success { color: #00ff88; }
+    .error { color: #ff4444; }
+  </style>
+</head>
+
+<body>
+
+<h1>🍺 Cantina Terminal</h1>
+
+<div id="reader"></div>
+<div id="player">Kein Spieler gescannt</div>
+
+<div id="menu"></div>
+
+<div id="status"></div>
+
+<script src="bar.js"></script>
+</body>
+</html>
